@@ -15,5 +15,5 @@ Each folder includes its own `Makefile` to compile and run the corresponding exp
 
 | Name | Description | Link |
 |------|-------------|------|
-| Hello Boot | Minimal bootable program that halts the CPU. | [01_hello_boot.asm](https://github.com/LautaroJayat/bootloaders-and-os-stuff/blob/main/01_hello_boot.asm) |
-| Hello World | Prints a message using BIOS interrupts, waits for key presses, and repeats. | [02_hello_world.asm](https://github.com/LautaroJayat/bootloaders-and-os-stuff/blob/main/02_hello_world.asm) |
+| Hello Boot | Minimal bootable program that halts the CPU. | [01_hello_boot.asm](https://github.com/LautaroJayat/bootloaders-and-os-stuff/blob/main/01_hello_boot/src/main.asm) |
+| Hello World | Prints a message using BIOS interrupts, waits for key presses, and repeats. | [02_hello_world.asm](https://github.com/LautaroJayat/bootloaders-and-os-stuff/blob/main/02_hello_world/src/main.asm) |
