@@ -1,7 +1,6 @@
 # 🧵 Bootloaders and OS Stuff
 
-This repository contains a collection of experiments related to bootloaders and operating systems, written in x86 assembly.  
-Each folder is a minimal, working example focused on understanding the early stages of system boot.
+This repository contains a collection of experiments related to bootloaders and operating systems, written in assembly, C, and who knows what else. Each folder has a minimal working example designed to test or demonstrate a specific idea in early-stage system programming.
 
 ---
 
@@ -38,4 +37,3 @@ This project is part of my personal deep dive into low-level systems — startin
 
 Feel free to fork, clone, or open issues.  
 This is a personal playground — but you're welcome to join the journey.
-
