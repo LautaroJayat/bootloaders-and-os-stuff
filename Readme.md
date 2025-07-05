@@ -20,8 +20,8 @@ Each experiment has its own `Makefile` to assemble and launch in QEMU.
 
 | Experiment | Description | README |
 |-----------|-------------|--------|
-| `01_hello_boot/` | Minimal bootable program that halts the CPU. | [View README](./01_hello_boot/README.md) |
-| `02_hello_world/` | Prints a message using BIOS interrupts, waits for keypresses, and repeats 3 times. | [View README](./02_print_loop_boot/README.md) |
+| `01_hello_boot/` | Minimal bootable program that halts the CPU. | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/01_hello_boot) |
+| `02_hello_world/` | Prints a message using BIOS interrupts, waits for keypresses, and repeats 3 times. | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/02_hello_world) |
 
 
 ---
