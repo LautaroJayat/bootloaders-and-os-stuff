@@ -23,6 +23,8 @@ Each experiment has its own `Makefile` to assemble and launch in QEMU.
 | `01_hello_boot/`             | A minimal 512-byte boot sector that simply halts the CPU.          | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/01_hello_boot)                                               |
 | `02_hello_world/`            | A boot sector that prints a message via BIOS interrupts, waits for three keypresses, then halts. | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/02_hello_world)                                              |
 | `03_two_stage_fat12_floppy/` | A two-stage FAT12 loader: Stage 1 reads the FAT12 BPB, converts LBA to CHS, and loads sector 1; Stage 2 is linked at 0x7E00, prints a message, then halts. | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/03_two_stage_fat12_floppy)                                    |
+| `04_stwo_stage_fat12_kernel_search_n_load/` | A two-stage FAT12 loader: Stage 1 reads the FAT12 BPB, converts LBA to CHS, then finds the kernel in the disk image; Stage 2 is then executed, prints a message, then halts. | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/04_stwo_stage_fat12_kernel_search_n_load)                                    |
+
 
 ---
 
