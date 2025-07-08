@@ -24,6 +24,7 @@ Each experiment has its own `Makefile` to assemble and launch in QEMU.
 | `02_hello_world/`            | A boot sector that prints a message via BIOS interrupts, waits for three keypresses, then halts. | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/02_hello_world)                                              |
 | `03_two_stage_fat12_floppy/` | A two-stage FAT12 loader: Stage 1 reads the FAT12 BPB, converts LBA to CHS, and loads sector 1; Stage 2 is linked at 0x7E00, prints a message, then halts. | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/03_two_stage_fat12_floppy)                                    |
 | `04_kernel_search_n_load/` | A two-stage FAT12 loader: Stage 1 reads the FAT12 BPB, converts LBA to CHS, then finds the kernel in the disk image; Stage 2 is then executed, prints a message, then halts. | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/04_kernel_search_n_load)                                    |
+| `05_simplest_grub/` | The simplest way to make your kernel boot using grub. Here we offload all the setup for protected mode and load directly into grub :) | [View README](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/05_simplest_grub)                                    |
 
 
 ---
