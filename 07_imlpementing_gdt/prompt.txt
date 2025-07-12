@@ -1,0 +1,266 @@
+<src/boot.asm>
+BITS 32
+
+section .text
+    ALIGN 4
+    DD 0x1BADB002
+    DD 0X00000000
+    DD -(0x1BADB002 + 0X00000000)
+
+global start
+extern kmain
+
+start:
+    CLI
+    mov esp, stack_space
+    CALL kmain
+    HLT
+
+haltKernel:
+    CLI
+    HLT
+    jmp haltKernel
+
+section .bss
+RESB 8192
+
+stack_space:
+</src/boot.asm>
+
+<src/gdt.asm>
+global gdt_flush
+
+gdt_flush:
+    mov eax, [esp+4]
+    LGDT [eax]
+
+    mov eax, 0x10 ; this is the offset where the GDT lives
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    jmp 0x08:.flush
+.flush:
+    ret
+</src/gdt.asm>
+
+<src/gdt.c>
+#include "gdt.h"
+
+#define NUM_OF_ENTRIES 5
+
+extern void gdt_flush(addr_t);
+
+struct gdt_entry_struct gdt_entries[NUM_OF_ENTRIES];
+
+struct gdt_ptr_struct gdt_ptr;
+
+// https://osdev.wiki/wiki/GDT_Tutorial#Flat_.2F_Long_Mode_Setup
+void initGdt()
+{
+    gdt_ptr.limit = (sizeof(struct gdt_entry_struct) * NUM_OF_ENTRIES) - 1;
+    gdt_ptr.base = &gdt_entries;
+
+    setGdtGate(0, 0, 0, 0, 0); // null segment
+
+    // kernel code segment 0x9A -> 1001 1010
+    setGdtGate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+
+    // kernel data segment 0x92 -> 1001 0010
+    setGdtGate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+
+    // kernel code segment 0xFA -> 1111 1010
+    // (the 11 is 3 in the middle to say ring 3)
+    setGdtGate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+
+    // kernel code segment 0xF2 -> 1111 0010
+    setGdtGate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+
+    gdt_flush(&gdt_ptr);
+}
+
+void setGdtGate(uint32_t entryNumber,
+    uint32_t base,
+    uint32_t limit,
+    uint8_t access,
+    uint8_t granularity)
+{
+    gdt_entries[entryNumber].base_lower = (base & 0xFFFF); // we are taking only the lower  half
+    gdt_entries[entryNumber].base_middle = (base >> 16) && 0xFF; // we shift to the right the upper half and take the bottom 8 bits
+    gdt_entries[entryNumber].base_high = (base >> 24) && 0xFF; // we shift to the right 3/4 of the whole 32 bits and get the bottom 8 bits
+    gdt_entries[entryNumber].limit = limit && 0xFFFF; // get the bottom 16 bits
+
+    // [A,B,C,D] --> get the half (limit >> 16) --> [A, B]
+    // then, if the bottom bit is set, set that to the flag --> & 0x0F
+    // then get the bit on the right (because the upper bit is in granularity)
+    // if set, or and assign (|=)
+    gdt_entries[entryNumber].flags = (limit >> 16) & 0x0F;
+    gdt_entries[entryNumber].flags |= (granularity & 0xF0);
+    gdt_entries[entryNumber].access_byte = access;
+}
+</src/gdt.c>
+
+<src/gdt.h>
+#include "stdint.h"
+
+struct gdt_entry_struct {
+  uint16_t limit;
+  uint16_t base_lower;
+  uint8_t base_middle;
+  uint8_t access_byte;
+  uint8_t flags;
+  uint8_t base_high;
+} __attribute__((packed));
+
+struct gdt_ptr_struct {
+  uint16_t limit;
+  unsigned int base;
+} __attribute((packed));
+
+void initGdt();
+
+void setGdtGate(uint32_t entryNumber,
+                uint32_t base,
+                uint32_t limit,
+                uint8_t access,
+                uint8_t granularity);
+</src/gdt.h>
+
+<src/kernel.c>
+#include "vga.h"
+
+void kmain(void);
+
+void kmain(void) {
+  Reset();
+  print("Hello from the Kernel!!
+");
+  print("I'm writing directly into video memory
+");
+  print(":)
+");
+}
+</src/kernel.c>
+
+<src/linker.ld>
+OUTPUT_FORMAT(elf32-i386)
+ENTRY(start)
+SECTIONS
+{
+    . = 0x100000;
+    .text   : {*(.text)}
+    .data   : {*(.data)}
+    .bss    : {*(.bss)}
+}
+</src/linker.ld>
+
+<src/stdint.h>
+typedef signed char int8_t;
+typedef unsigned char uint8_t;
+
+typedef signed short int16_t;
+typedef unsigned short uint16_t;
+
+typedef signed long int32_t;
+typedef unsigned long uint32_t;
+ 
+typedef signed long long int64_t;
+typedef unsigned long long uint64_t;
+
+#define true 1
+#define false 0
+</src/stdint.h>
+
+<src/vga.c>
+#include "vga.h"
+
+uint16_t column = 0;
+uint16_t line = 0;
+
+uint16_t* vga = (uint16_t* const)0xB8000;
+const uint16_t defaultColor = (COLORS_LIGHT_GREY << 8) | (COLORS_BLACK << 12);
+uint16_t currentColor = defaultColor;
+
+void Reset() {
+  line = 0;
+  column = 0;
+  currentColor = defaultColor;
+
+  for (uint16_t y = 0; y < height; y++) {
+    for (uint16_t x = 0; x < width; x++) {
+      vga[y * width + x] = ' ' | defaultColor;
+    }
+  }
+}
+
+void newLine() {
+  if (line < height - 1) {
+    line++;
+    column = 0;
+  } else {
+    scrollUp();
+    column = 0;
+  }
+}
+
+void scrollUp() {
+  for (uint16_t y = 0; y < height; y++) {
+    for (uint16_t x = 0; x < width; x++) {
+      vga[(y - 1) * width + x] = vga[y * width + x];
+    }
+  }
+
+  for (uint16_t x = 0; x < width; x++) {
+    vga[(height - 1) * width + x] = ' ' | currentColor;
+  }
+}
+
+void print(const char* s) {
+  while (*s) {
+    switch (*s) {
+      case '
+':
+        newLine();
+        break;
+      case '':
+        column = 0;
+        break;
+      case '	':
+        if (column == width) {
+          newLine();
+        }
+        uint16_t tablen = 4 - (column % 4);
+        while (tablen != 0) {
+          vga[line * width + column++] = ' ' | currentColor;
+          tablen--;
+        }
+        break;
+      default:
+        if (column == width) {
+          newLine();
+        }
+        vga[line * width + (column++)] = *s | currentColor;
+        break;
+    }
+    s++;
+  }
+}
+</src/vga.c>
+
+<src/vga.h>
+#pragma once
+#include "stdint.h"
+
+#define COLORS_BLACK 0
+#define COLORS_LIGHT_GREY 7
+
+#define width 80
+#define height 25
+
+void print(const char* s);
+void scrollUp();
+void newLine();
+void Reset();
+</src/vga.h>
+
