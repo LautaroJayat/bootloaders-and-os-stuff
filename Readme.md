@@ -1,4 +1,4 @@
-# 🧵 Bootloaders and OS Stuff
+# :alien: Bootloaders and OS Stuff
 
 This repository contains a collection of experiments related to bootloaders and operating systems, written in assembly, C, and who knows what else. Each folder has a minimal working example designed to test or demonstrate a specific idea in early-stage system programming.
 
