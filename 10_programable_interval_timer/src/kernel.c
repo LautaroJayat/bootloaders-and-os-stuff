@@ -1,4 +1,5 @@
 #include "./gdt.h"
+#include "./interrupts/idt.h"
 #include "./timer/timer.h"
 #include "./vga.h"
 
@@ -15,7 +16,6 @@ void kmain(void)
     initIdt();
     print("IDT Already Set!\r\n");
     initTimer();
-    // KEEP THE KERNEL ALIVE: halt until the next interrupt forever
     for (;;)
         ;
 };
