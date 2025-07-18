@@ -11,3 +11,4 @@ void print(const char* s);
 void scrollUp();
 void newLine();
 void Reset();
+void print_hex(uint32_t value);

@@ -3,6 +3,7 @@ idt_flush:
     mov eax, [esp+4]    ; extract the argument from the stack
     LIDT [eax]          ; load interrupt descriptor table
     STI                 ; set interrupt
+    ret
 
 %macro ISR_NOERRCODE 1
     global isr%1:

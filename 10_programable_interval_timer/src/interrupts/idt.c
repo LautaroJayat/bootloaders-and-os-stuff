@@ -20,7 +20,7 @@ void initIdt()
     // 0x20 commands and 0x21 data
     // 0xA0 commands and 0xA1 data
     outPortB(0x20, 0x11);
-    outPortB(0xA2, 0x11);
+    outPortB(0xA0, 0x11);
 
     outPortB(0x21, 0x20);
     outPortB(0xA1, 0x28);
@@ -33,6 +33,9 @@ void initIdt()
 
     outPortB(0x21, 0x0);
     outPortB(0xA1, 0x0);
+
+    outPortB(0x21, 0xFE); // PIC1 data port: unmask IRQ0 (0b1111_1110)
+    outPortB(0xA1, 0xFF); // PIC2 data port: mask all slave IRQs
 
     // 0x8E 1000 1110 -->
     // 0x08 0000 1000 --> points to a valid segment in the GDT
@@ -140,12 +143,12 @@ void isr_handler(struct InterruptRegisters* regs)
 {
     if (regs->int_no < 32) {
         print(exception_messages[regs->int_no]);
-        print("\n");
-        print("Exception! System Halted!");
-        for (;;) { }
+        print("\n\n");
+        print("Exception! System Halted!\n");
+        for (;;)
+            ;
     }
 }
-
 void* irq_routines[16] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0

@@ -3,6 +3,7 @@ idt_flush:
     mov eax, [esp+4]    ; extract the argument from the stack
     LIDT [eax]          ; load interrupt descriptor table
     STI                 ; set interrupt
+    RET
 
 %macro ISR_NOERRCODE 1
     global isr%1:
@@ -25,8 +26,8 @@ idt_flush:
     global irq%1:
     irq%1:
         CLI
-        push long 0
-        push long %2
+        push  long 0     ; ← dummy “error code” for hardware IRQs
+        push  long %2    ; ← the interrupt number (e.g. 32 for IRQ0)
         jmp irq_common_stub
 %endmacro
 

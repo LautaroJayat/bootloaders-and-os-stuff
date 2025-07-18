@@ -1,5 +1,5 @@
 #pragma once
-#include "stdint.h"
+#include "./stdint.h"
 
 #define COLORS_BLACK 0
 #define COLORS_LIGHT_GREY 7
@@ -11,3 +11,4 @@ void print(const char* s);
 void scrollUp();
 void newLine();
 void Reset();
+void print_hex(uint32_t value);

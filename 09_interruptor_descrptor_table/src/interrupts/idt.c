@@ -143,7 +143,8 @@ void isr_handler(struct InterruptRegisters* regs)
         print(exception_messages[regs->int_no]);
         print("\n");
         print("Exception! System Halted!");
-        for (;;) { }
+        for (;;)
+            ;
     }
 }
 

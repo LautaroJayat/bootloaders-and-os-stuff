@@ -70,3 +70,15 @@ void print(const char* s) {
     s++;
   }
 }
+
+
+// Print a 32-bit value as 8 hex digits (no prefix)
+void print_hex(uint32_t value) {
+  char buf[9];
+  for (int i = 0; i < 8; i++) {
+      uint8_t nibble = (value >> (28 - i*4)) & 0xF;
+      buf[i] = nibble < 10 ? '0' + nibble : 'A' + (nibble - 10);
+  }
+  buf[8] = '\0';
+  print(buf);
+}
