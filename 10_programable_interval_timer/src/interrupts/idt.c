@@ -17,25 +17,31 @@ void initIdt()
 
     memset(&idt_entries, 0, sizeof(struct idt_entry_struct) * NUM_IDT_ENTRIES);
 
-    // 0x20 commands and 0x21 data
-    // 0xA0 commands and 0xA1 data
-    outPortB(0x20, 0x11);
-    outPortB(0xA0, 0x11);
+    // https://wiki.osdev.org/8259_PIC#Initialisation
 
-    outPortB(0x21, 0x20);
-    outPortB(0xA1, 0x28);
+    // Start initialization sequence (ICW1) for both PICs
+    outPortB(0x20, 0x11); // Master PIC command port: 0x11 = start init, expect ICW4
+    outPortB(0xA0, 0x11); // Slave PIC command port: 0x11 = start init, expect ICW4
 
-    outPortB(0x21, 0x04);
-    outPortB(0xA1, 0x02);
+    // Set vector offset (ICW2)
+    outPortB(0x21, 0x20); // Master PIC data port: IRQ0–7 mapped to INT 0x20–0x27
+    outPortB(0xA1, 0x28); // Slave PIC data port: IRQ8–15 mapped to INT 0x28–0x2F
 
-    outPortB(0x21, 0x01);
-    outPortB(0xA1, 0x01);
+    // Setup cascading (ICW3)
+    outPortB(0x21, 0x04); // Master PIC: bit 2 set → slave PIC at IRQ2
+    outPortB(0xA1, 0x02); // Slave PIC: cascade identity = 2 (connected to master's IRQ2)
 
-    outPortB(0x21, 0x0);
-    outPortB(0xA1, 0x0);
+    // Set environment info (ICW4)
+    outPortB(0x21, 0x01); // Master PIC: 8086/88 mode
+    outPortB(0xA1, 0x01); // Slave PIC: 8086/88 mode
 
-    outPortB(0x21, 0xFE); // PIC1 data port: unmask IRQ0 (0b1111_1110)
-    outPortB(0xA1, 0xFF); // PIC2 data port: mask all slave IRQs
+    // Clear interrupt masks (initial state — all IRQs enabled)
+    outPortB(0x21, 0x0); // Master PIC: unmask all IRQs
+    outPortB(0xA1, 0x0); // Slave PIC: unmask all IRQs
+
+    // Set final masks
+    outPortB(0x21, 0xFE); // Master PIC: 1111_1110 → only IRQ0 (timer) unmasked
+    outPortB(0xA1, 0xFF); // Slave PIC: 1111_1111 → all IRQs masked
 
     // 0x8E 1000 1110 -->
     // 0x08 0000 1000 --> points to a valid segment in the GDT
