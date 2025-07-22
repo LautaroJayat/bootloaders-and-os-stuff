@@ -43,8 +43,31 @@ void initIdt()
     outPortB(0x21, 0xFE); // Master PIC: 1111_1110 → only IRQ0 (timer) unmasked
     outPortB(0xA1, 0xFF); // Slave PIC: 1111_1111 → all IRQs masked
 
-    // 0x8E 1000 1110 -->
-    // 0x08 0000 1000 --> points to a valid segment in the GDT
+    
+    // 0x08 is 0001 0000
+    // Bit | Value | Meaning / Field                        | Explanation
+    // ----|-------|----------------------------------------|---------------------------------------
+    // 7   | 0     | —                                      | Unused
+    // 6   | 0     | —                                      | Unused
+    // 5   | 0     | TI (Table Indicator)                   | 0 = GDT, 1 = LDT
+    // 4   | 1     | RPL bit 1 (Requested Privilege Level)  | Low privilege bits (here 0x0)
+    // 3   | 0     | RPL bit 0                              | (together with bit 4 = 00)
+    // 2   | 0     | Index bit 2                            | Part of index to GDT entry
+    // 1   | 0     | Index bit 1                            | Part of index to GDT entry
+    // 0   | 0     | Index bit 0                            | Part of index to GDT entry
+
+    // 0x8E is 1001 1110
+    // Bit | Value | Meaning / Field                   | Explanation
+    // ----|-------|-----------------------------------|-------------------------------------------
+    // 7   | 1     | P (Present)                       | Segment present in memory (1 = yes)
+    // 6   | 0     | DPL (Descriptor Privilege Level)  | DPL bit 1 (high bit) — 0 means ring 0 (kernel)
+    // 5   | 0     | DPL (Descriptor Privilege Level)  | DPL bit 0 (low bit)
+    // 4   | 1     | S (Storage Segment)               | 0 = system segment (interrupt/trap gate)
+    // 3   | 1     | Type bit 3                        | Gate type bits [3..0] = 1110 means 32-bit interrupt gate
+    // 2   | 1     | Type bit 2
+    // 1   | 1     | Type bit 1
+    // 0   | 0     | Type bit 0
+
     setIdtGate(0, (uint32_t)isr0, 0x08, 0x8E);
     setIdtGate(1, (uint32_t)isr1, 0x08, 0x8E);
     setIdtGate(2, (uint32_t)isr2, 0x08, 0x8E);
