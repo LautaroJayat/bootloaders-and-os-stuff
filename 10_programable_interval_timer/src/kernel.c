@@ -16,6 +16,7 @@ void kmain(void)
     initIdt();
     print("IDT Already Set!\r\n");
     initTimer();
-    for (;;)
-        ;
+    for (;;) {
+        print("from kernel!\n\t");
+    }
 };
