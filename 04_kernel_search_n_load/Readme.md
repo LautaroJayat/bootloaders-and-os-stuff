@@ -3,7 +3,6 @@
 **Time to get your hands dirty!!** 🚀  
 This project is an experiment for building a true two-stage x86 real-mode bootloader that lives on a FAT12 floppy and a small “kernel” that gets read and loaded from disk.
 In this example we use the fat headers to search for the files and load them into memory.
-No OS, no cheats—just raw NASM, BIOS interrupts, and a healthy dose of disk geometry math.
 
 ## 🧠 How It Works
 
@@ -12,7 +11,7 @@ No OS, no cheats—just raw NASM, BIOS interrupts, and a healthy dose of disk ge
    - Contains a FAT12 BIOS Parameter Block (BPB)  
    - Implements `lba_to_chs` + `disk_read` via `INT 13h` with retries & error handling 
    - Implements little math to locate files in the FAT12 file system
-   - Locates the kernel and jups to its first instruction  
+   - Locates the kernel, loads it into memory and jups to its first instruction  
 
 2. **Stage 2 Kernel**  
    - Assembled with `ORG 0x0`, no magic offsets needed  

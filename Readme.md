@@ -27,6 +27,9 @@ Each experiment has its own `Makefile` to assemble and launch in QEMU.
 | [`05_simplest_grub/`](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/05_simplest_grub)                     | The simplest way to make your kernel boot using grub. Here we offload all the setup for protected mode and load directly into grub :)                                        |
 | [`06_writing_to_video_memory/`](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/06_writing_to_video_memory) | Creating a simple routine to print some messages by writing directly to video memory                                                                                         |
 | [`07_imlpementing_gdt/`](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/07_imlpementing_gdt)               | A simple example on loading a global descriptor table (GDT) to set memory spaces for kernel and user processes                                                               |
+| [`08_task_state_segment/`](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/08_task_state_segment)           | Implementing Task State Segment (TSS) to manage task switching and privilege levels in protected mode                                                                        |
+| [`09_interruptor_descriptor_table/`](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/09_interruptor_descriptor_table) | Setting up the Interrupt Descriptor Table (IDT) to handle CPU exceptions and hardware interrupts                                                                            |
+| [`10_programmable_interval_timer/`](https://github.com/LautaroJayat/bootloaders-and-os-stuff/tree/main/10_programmable_interval_timer)   | Implementing the Programmable Interval Timer (PIT) for system timing and task scheduling                                                                                    |
 
 ---
 

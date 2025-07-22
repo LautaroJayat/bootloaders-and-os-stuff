@@ -39,9 +39,3 @@ This isn’t just about adding entries to a table or writing some C code. It’s
 - Advanced multitasking
 
 The kernel is no longer just a flat binary—it’s becoming a structured, modular system capable of handling complex tasks. And the best part? We’re just getting started.
-
----
-
-## What’s Next?
-
-With the GDT and TSS ready, the next step is to implement user-mode transitions and system calls. This will allow us to run isolated user applications while maintaining full control in the kernel. Stay tuned—things are about to get even more exciting! 🚀
